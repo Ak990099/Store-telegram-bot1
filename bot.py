@@ -3,6 +3,10 @@ import random
 import os
 from pyrogram import Client, filters
 from pymongo import MongoClient
+try:
+    asyncio.get_event_loop()
+except RuntimeError:
+    asyncio.set_event_loop(asyncio.new_event_loop())
 
 # CONFIG (ENV VARIABLES)
 BOT_TOKEN = os.getenv("BOT_TOKEN")
