@@ -106,7 +106,9 @@ async def add_admin(client, message):
 async def list_admins(client, message):
     await message.reply(f"Admins:\n{admins}")
 
-
+@app.on_message(filters.command("start"))
+async def start(client, message):
+    await message.reply("Bot is alive 🚀")
 from flask import Flask
 import threading
 import os
