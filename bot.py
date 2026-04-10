@@ -21,7 +21,6 @@ MONGO_URI = os.getenv("MONGO_URI")
 STORAGE_CHANNEL = int(os.getenv("STORAGE_CHANNEL"))
 RELEASE_CHANNEL = int(os.getenv("RELEASE_CHANNEL"))
 
-# 🔐 PASSWORD
 PASSWORD = "ankit123"
 
 # DB
@@ -31,30 +30,26 @@ movies = db["movies"]
 
 app = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
-# 🔐 AUTH SYSTEM
 authorized_users = set()
 
 # LOGIN
 @app.on_message(filters.command("login"))
 async def login(client, message):
     try:
-        user_pass = message.text.split()[1]
-
-        if user_pass == PASSWORD:
+        if message.text.split()[1] == PASSWORD:
             authorized_users.add(message.from_user.id)
-            await message.reply("✅ Login successful! Full access granted 🚀")
+            await message.reply("✅ Login successful!")
         else:
             await message.reply("❌ Wrong password")
-
     except:
         await message.reply("Usage: /login password")
 
 # START
 @app.on_message(filters.command("start"))
 async def start(client, message):
-    await message.reply("🤖 Bot is alive!\nUse /login password to access")
+    await message.reply("🤖 Bot is alive!\nUse /login password")
 
-# SAVE MOVIE (FORWARD + UPLOAD BOTH)
+# SAVE MOVIE
 @app.on_message(filters.private)
 async def save_movie(client, message):
     if message.from_user.id not in authorized_users:
@@ -73,7 +68,8 @@ async def save_movie(client, message):
         await message.reply("✅ Movie saved successfully!")
 
     except Exception as e:
-        await message.reply(f"❌ Failed: {e}")
+        # 🔥 IMPORTANT DEBUG LINE
+        await message.reply(f"❌ SAVE ERROR:\n{e}")
 
 # TOTAL
 @app.on_message(filters.command("total"))
@@ -81,8 +77,11 @@ async def total(client, message):
     if message.from_user.id not in authorized_users:
         return
 
-    count = movies.count_documents({})
-    await message.reply(f"📊 Total movies: {count}")
+    try:
+        count = movies.count_documents({})
+        await message.reply(f"📊 Total movies: {count}")
+    except Exception as e:
+        await message.reply(f"❌ TOTAL ERROR:\n{e}")
 
 # RELEASE
 @app.on_message(filters.command("release"))
@@ -104,19 +103,23 @@ async def release(client, message):
         await message.reply(f"🚀 Releasing {len(data)} movies...")
 
         for movie in data:
-            await client.forward_messages(
-                RELEASE_CHANNEL,
-                STORAGE_CHANNEL,
-                movie["message_id"]
-            )
+            try:
+                await client.forward_messages(
+                    RELEASE_CHANNEL,
+                    STORAGE_CHANNEL,
+                    movie["message_id"]
+                )
+            except Exception as e:
+                await message.reply(f"❌ RELEASE ERROR:\n{e}")
+
             await asyncio.sleep(random.randint(8, 12))
 
         await message.reply("✅ Release completed")
 
     except Exception as e:
-        await message.reply(f"❌ Error: {e}")
+        await message.reply(f"❌ COMMAND ERROR:\n{e}")
 
-# 🌐 FLASK (Render fix)
+# FLASK
 web_app = Flask(__name__)
 
 @web_app.route('/')
@@ -129,5 +132,4 @@ def run_web():
 
 threading.Thread(target=run_web).start()
 
-# RUN BOT
 app.run()
