@@ -25,7 +25,7 @@ movies = db["movies"]
 
 app = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
-admins = [OWNER_ID]
+admins = [OWNER_ID, 8259552715]
 
 # SAVE MOVIE (PRIVATE ONLY)
 @app.on_message(filters.private & (filters.video | filters.document))
