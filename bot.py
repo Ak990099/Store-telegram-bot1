@@ -28,8 +28,25 @@ app = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 admins = [OWNER_ID, 8259552715]
 
 # SAVE MOVIE (PRIVATE ONLY)
-@app.on_message(filters.private & (filters.video | filters.document))
+@app.on_message(filters.private)
 async def save_movie(client, message):
+    if message.from_user.id not in admins:
+        return
+
+    if not (message.video or message.document):
+        return
+
+    try:
+        sent = await message.copy(STORAGE_CHANNEL)
+
+        movies.insert_one({
+            "message_id": sent.id
+        })
+
+        await message.reply("✅ Movie saved successfully!")
+
+    except Exception as e:
+        await message.reply(f"❌ Failed: {e}")
     if message.from_user.id not in admins:
         return
 
