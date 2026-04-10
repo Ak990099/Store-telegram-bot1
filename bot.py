@@ -106,7 +106,7 @@ async def add_admin(client, message):
 async def list_admins(client, message):
     await message.reply(f"Admins:\n{admins}")
 
-app.run()
+
 from flask import Flask
 import threading
 import os
@@ -122,3 +122,4 @@ def run_web():
     web_app.run(host="0.0.0.0", port=port)
 
 threading.Thread(target=run_web).start()
+app.run()
