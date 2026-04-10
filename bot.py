@@ -21,7 +21,7 @@ MONGO_URI = os.getenv("MONGO_URI")
 STORAGE_CHANNEL = int(os.getenv("STORAGE_CHANNEL"))
 RELEASE_CHANNEL = int(os.getenv("RELEASE_CHANNEL"))
 
-# 🔐 PASSWORD (change this)
+# 🔐 PASSWORD
 PASSWORD = "ankit123"
 
 # DB
@@ -34,7 +34,7 @@ app = Client("bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 # 🔐 AUTH SYSTEM
 authorized_users = set()
 
-# LOGIN COMMAND
+# LOGIN
 @app.on_message(filters.command("login"))
 async def login(client, message):
     try:
@@ -42,7 +42,7 @@ async def login(client, message):
 
         if user_pass == PASSWORD:
             authorized_users.add(message.from_user.id)
-            await message.reply("✅ Login successful!")
+            await message.reply("✅ Login successful! Full access granted 🚀")
         else:
             await message.reply("❌ Wrong password")
 
@@ -52,9 +52,9 @@ async def login(client, message):
 # START
 @app.on_message(filters.command("start"))
 async def start(client, message):
-    await message.reply("Bot is alive 🚀\nUse /login password")
+    await message.reply("🤖 Bot is alive!\nUse /login password to access")
 
-# SAVE MOVIE
+# SAVE MOVIE (FORWARD + UPLOAD BOTH)
 @app.on_message(filters.private)
 async def save_movie(client, message):
     if message.from_user.id not in authorized_users:
@@ -96,6 +96,10 @@ async def release(client, message):
         end = int(end)
 
         data = list(movies.find())[start:end]
+
+        if not data:
+            await message.reply("❌ No movies found")
+            return
 
         await message.reply(f"🚀 Releasing {len(data)} movies...")
 
