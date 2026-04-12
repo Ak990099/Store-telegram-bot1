@@ -1,7 +1,7 @@
 import asyncio
 import os
 from aiohttp import web
-from pyrogram import Client, filters, idle
+from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 from pyrogram.types import Message
 
@@ -14,7 +14,7 @@ DESTINATION_CHAT = int(os.environ.get("DESTINATION_CHAT"))
 
 PROGRESS_FILE = "last_msg_id.txt"
 
-bot = Client("forwarder_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+bot = Client("forwarder_bot_v2", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 def get_last_id():
     if os.path.exists(PROGRESS_FILE):
@@ -154,6 +154,10 @@ async def main():
     # Bot start - async with pattern (correct way)
     async with bot:
         print("✅ Bot started!")
-        await idle()
+        while True:
+            await asyncio.sleep(60)
 
+print("TOKEN:", BOT_TOKEN)
+print("API_ID:", API_ID)
+print("API_HASH:", API_HASH)
 asyncio.run(main())
