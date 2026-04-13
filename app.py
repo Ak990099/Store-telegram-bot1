@@ -28,6 +28,11 @@ bot = Client(
     api_hash=API_HASH,
     bot_token=BOT_TOKEN
 )
+from pyrogram import filters
+
+@bot.on_message(filters.command("start"))
+async def start_cmd(client, message):
+    await message.reply("Bot working ✅")
 
 # ── DATABASE FUNCTIONS ───────────────────
 def get_last_id():
@@ -90,7 +95,12 @@ def copy_route():
     return f"Copied {result} messages ✅"
 
 # ── START BOT ────────────────────────────
-bot.start()
+import threading
+
+def start_bot():
+    bot.run()
+
+threading.Thread(target=start_bot).start()
 
 # ── RUN SERVER ───────────────────────────
 if __name__ == "__main__":
